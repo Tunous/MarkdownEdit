@@ -1,6 +1,7 @@
 package me.thanel.markdownedit;
 
 import android.support.annotation.IntDef;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
@@ -89,6 +90,50 @@ public class MarkdownEdit {
     }
 
     /**
+     * Turns the selected tag to Markdown header tag "# text" with the specified heading level.
+     * <p>
+     * If no text is selected then the whole line at which the cursor is currently positioned will
+     * be changed to Markdown header tag instead.
+     *
+     * @param text  The {@link Editable} text to which to add Markdown header tag.
+     * @param level The heading level. Must be in range from 1, inclusive, to 6, inclusive.
+     */
+    public static void addHeader(@NonNull Editable text, @IntRange(from = 1, to = 6) int level) {
+        if (level < 1 || level > 6) {
+            throw new IllegalArgumentException(
+                    "level: Heading level must be in range from 1, inclusive, to 6, inclusive.");
+        }
+
+        if (!SelectionUtils.hasSelection(text)) {
+            moveSelectionStartToStartOfLine(text);
+            moveSelectionEndToEndOfLine(text);
+        }
+
+        CharSequence selectedText = SelectionUtils.getSelectedText(text);
+
+        StringBuilder result = new StringBuilder();
+        int selectionStart = SelectionUtils.getSelectionStart(text);
+        if (selectionStart > 0 && text.charAt(selectionStart - 1) != '\n') {
+            result.append("\n");
+        }
+        for (int i = 0; i < level; i++) {
+            result.append("#");
+        }
+        result.append(" ").append(selectedText);
+        int selectionEnd = SelectionUtils.getSelectionEnd(text);
+        if (selectionEnd < text.length() && text.charAt(selectionEnd) != '\n') {
+            result.append("\n");
+        }
+
+        SelectionUtils.replaceSelectedText(text, result);
+
+        selectionEnd = SelectionUtils.getSelectionEnd(text);
+        if (selectionEnd < text.length() && text.charAt(selectionEnd - 1) != '\n') {
+            Selection.setSelection(text, selectionEnd + 1);
+        }
+    }
+
+    /**
      * Inserts a markdown list to the specified EditText at the currently selected position.
      *
      * @param text     The EditText to which to add markdown list.
@@ -148,35 +193,6 @@ public class MarkdownEdit {
 
         text.replace(selectionStart, selectionEnd, stringBuilder);
         Selection.setSelection(text, selectionStart + stringBuilder.length());
-        updateCursorPosition(text, selectedText.length() > 0);
-    }
-
-    /**
-     * Inserts a markdown header tag to the specified EditText at the currently selected position.
-     *
-     * @param text  The EditText to which to add markdown header tag.
-     * @param level The level of the header tag.
-     */
-    public static void addHeader(@NonNull Editable text, int level) {
-        if (!SelectionUtils.hasSelection(text)) {
-            moveSelectionStartToStartOfLine(text);
-            moveSelectionEndToEndOfLine(text);
-        }
-
-        CharSequence selectedText = SelectionUtils.getSelectedText(text);
-        int selectionStart = SelectionUtils.getSelectionStart(text);
-
-        StringBuilder result = new StringBuilder();
-        requireEmptyLineAbove(text, result, selectionStart);
-
-        for (int i = 0; i < level; i++) {
-            result.append("#");
-        }
-        result.append(" ").append(selectedText);
-
-        requireEmptyLineBelow(text, result, SelectionUtils.getSelectionEnd(text));
-
-        SelectionUtils.replaceSelectedText(text, result);
         updateCursorPosition(text, selectedText.length() > 0);
     }
 
@@ -317,7 +333,7 @@ public class MarkdownEdit {
 
     private static void moveSelectionEndToEndOfLine(@NonNull Spannable text) {
         int position = SelectionUtils.getSelectionEnd(text);
-        String substring = text.subSequence(0, position).toString();
+        String substring = text.subSequence(position, text.length()).toString();
 
         int selectionEnd = substring.indexOf('\n');
         if (selectionEnd == -1) {
