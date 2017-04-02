@@ -12,7 +12,7 @@ import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
-public class SurroundTest {
+public class SurroundTagTest {
     private final String SURROUND_TEXT = "**";
 
     @Test

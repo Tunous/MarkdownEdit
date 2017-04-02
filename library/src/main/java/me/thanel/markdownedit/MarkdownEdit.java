@@ -18,7 +18,7 @@ public class MarkdownEdit {
      * Surrounds the selected text with Markdown bold tag "**text**", or if no text is selected
      * inserts empty bold tag at the current cursor position.
      *
-     * @param text The Editable text to which to add Markdown bold tag.
+     * @param text The {@link Editable} text to which to add Markdown bold tag.
      */
     public static void addBold(@NonNull Editable text) {
         surroundSelectionWith(text, "**");
@@ -38,7 +38,7 @@ public class MarkdownEdit {
      * Surrounds the selected text with Markdown strike-through tag "~~text~~", or if no text is
      * selected inserts empty strike-through tag at the current cursor position.
      *
-     * @param text The Editable text to which to add Markdown strike-through tag.
+     * @param text The {@link Editable} text to which to add Markdown strike-through tag.
      */
     public static void addStrikeThrough(@NonNull Editable text) {
         surroundSelectionWith(text, "~~");
@@ -50,7 +50,7 @@ public class MarkdownEdit {
      * If no text is selected the cursor will be positioned inside of the title tag, otherwise the
      * url marker will be selected and previously selected text will be inserted as a image title.
      *
-     * @param text The Editable text to which to add Markdown image tag.
+     * @param text The {@link Editable} text to which to add Markdown image tag.
      */
     public static void addImage(@NonNull Editable text) {
         addLink(text, true);
@@ -62,10 +62,34 @@ public class MarkdownEdit {
      * If no text is selected the cursor will be positioned inside of the title tag, otherwise the
      * url marker will be selected and previously selected text will be inserted as a link title.
      *
-     * @param text The EditText to which to add link tag.
+     * @param text The {@link Editable} text to which to add Markdown link tag.
      */
     public static void addLink(@NonNull Editable text) {
         addLink(text, false);
+    }
+
+    /**
+     * Inserts a Markdown divider at the cursor position.
+     * <p>
+     * If text is selected it'll be removed and divider will be added at its position instead.
+     *
+     * @param text The {@link Editable} text to which to add Markdown divider.
+     */
+    public static void addDivider(@NonNull Editable text) {
+        int selectionStart = SelectionUtils.getSelectionStart(text);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        requireEmptyLineAbove(text, stringBuilder, selectionStart);
+        stringBuilder.append("-------");
+
+        if (SelectionUtils.getSelectionEnd(text) == text.length()) {
+            stringBuilder.append("\n");
+        } else {
+            requireEmptyLineBelow(text, stringBuilder, SelectionUtils.getSelectionEnd(text));
+        }
+
+        SelectionUtils.replaceSelectedText(text, stringBuilder);
+        updateCursorPosition(text, true);
     }
 
     /**
@@ -217,27 +241,6 @@ public class MarkdownEdit {
 
         SelectionUtils.replaceSelectedText(text, stringBuilder);
         updateCursorPosition(text, selectedText.length() > 0);
-    }
-
-    /**
-     * Inserts a markdown divider to the specified EditText at the currently selected position.
-     *
-     * @param text The EditText to which to add divider.
-     */
-    public static void addDivider(@NonNull Editable text) {
-        int selectionStart = SelectionUtils.getSelectionStart(text);
-
-        StringBuilder stringBuilder = new StringBuilder();
-        requireEmptyLineAbove(text, stringBuilder, selectionStart);
-        stringBuilder.append("-------");
-        if (SelectionUtils.getSelectionEnd(text) == text.length()) {
-            stringBuilder.append("\n\n");
-        } else {
-            requireEmptyLineBelow(text, stringBuilder, SelectionUtils.getSelectionEnd(text));
-        }
-
-        SelectionUtils.replaceSelectedText(text, stringBuilder);
-        updateCursorPosition(text, true);
     }
 
     @VisibleForTesting
