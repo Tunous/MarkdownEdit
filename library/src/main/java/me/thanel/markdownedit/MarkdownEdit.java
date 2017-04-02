@@ -15,7 +15,7 @@ public class MarkdownEdit {
     private MarkdownEdit() { /* cannot be instantiated */ }
 
     /**
-     * Surrounds the selected text with Markdown bold tag (**text**), or if no text is selected
+     * Surrounds the selected text with Markdown bold tag "**text**", or if no text is selected
      * inserts empty bold tag at the current cursor position.
      *
      * @param text The Editable text to which to add Markdown bold tag.
@@ -25,7 +25,7 @@ public class MarkdownEdit {
     }
 
     /**
-     * Surrounds the selected text with Markdown italic tag (_text_), or if no text is selected
+     * Surrounds the selected text with Markdown italic tag "_text_", or if no text is selected
      * inserts empty italic tag at the current cursor position.
      *
      * @param text The Editable text to which to add Markdown italic tag.
@@ -35,13 +35,37 @@ public class MarkdownEdit {
     }
 
     /**
-     * Surrounds the selected text with Markdown strike-through tag (~~text~~), or if no text is
+     * Surrounds the selected text with Markdown strike-through tag "~~text~~", or if no text is
      * selected inserts empty strike-through tag at the current cursor position.
      *
      * @param text The Editable text to which to add Markdown strike-through tag.
      */
     public static void addStrikeThrough(@NonNull Editable text) {
         surroundSelectionWith(text, "~~");
+    }
+
+    /**
+     * Turns the selected text to Markdown image tag "![title](url)" treating selection as a title.
+     * <p>
+     * If no text is selected the cursor will be positioned inside of the title tag, otherwise the
+     * url marker will be selected and previously selected text will be inserted as a image title.
+     *
+     * @param text The Editable text to which to add Markdown image tag.
+     */
+    public static void addImage(@NonNull Editable text) {
+        addLink(text, true);
+    }
+
+    /**
+     * Turns the selected text to Markdown link tag "[title](url)" treating selection as a title.
+     * <p>
+     * If no text is selected the cursor will be positioned inside of the title tag, otherwise the
+     * url marker will be selected and previously selected text will be inserted as a link title.
+     *
+     * @param text The EditText to which to add link tag.
+     */
+    public static void addLink(@NonNull Editable text) {
+        addLink(text, false);
     }
 
     /**
@@ -216,54 +240,6 @@ public class MarkdownEdit {
         updateCursorPosition(text, true);
     }
 
-    /**
-     * Inserts a markdown image tag to the specified EditText at the currently selected position.
-     *
-     * @param text The EditText to which to add image tag.
-     */
-    public static void addImage(@NonNull Editable text) {
-        if (!SelectionUtils.hasSelection(text)) {
-            SelectionUtils.selectWordAroundCursor(text);
-        }
-        CharSequence selectedText = SelectionUtils.getSelectedText(text);
-
-        int selectionStart = SelectionUtils.getSelectionStart(text);
-
-        String result = "![" + selectedText + "](url)";
-        SelectionUtils.replaceSelectedText(text, result);
-
-        if (selectedText.length() == 0) {
-            Selection.setSelection(text, selectionStart + 2);
-        } else {
-            selectionStart = selectionStart + result.length() - 4;
-            Selection.setSelection(text, selectionStart, selectionStart + 3);
-        }
-    }
-
-    /**
-     * Inserts a markdown link tag to the specified EditText at the currently selected position.
-     *
-     * @param text The EditText to which to add link tag.
-     */
-    public static void addLink(@NonNull Editable text) {
-        if (!SelectionUtils.hasSelection(text)) {
-            SelectionUtils.selectWordAroundCursor(text);
-        }
-        CharSequence selectedText = SelectionUtils.getSelectedText(text);
-
-        int selectionStart = SelectionUtils.getSelectionStart(text);
-
-        String result = "[" + selectedText + "](url)";
-        SelectionUtils.replaceSelectedText(text, result);
-
-        if (selectedText.length() == 0) {
-            Selection.setSelection(text, selectionStart + 1);
-        } else {
-            selectionStart = selectionStart + result.length() - 4;
-            Selection.setSelection(text, selectionStart, selectionStart + 3);
-        }
-    }
-
     @VisibleForTesting
     static void surroundSelectionWith(@NonNull Editable text, @NonNull String surroundText) {
         if (!SelectionUtils.hasSelection(text)) {
@@ -284,6 +260,26 @@ public class MarkdownEdit {
 
         SelectionUtils.replaceSelectedText(text, result);
         Selection.setSelection(text, selectionStart + result.length() - charactersToGoBack);
+    }
+
+    private static void addLink(@NonNull Editable text, boolean isImageLink) {
+        if (!SelectionUtils.hasSelection(text)) {
+            SelectionUtils.selectWordAroundCursor(text);
+        }
+        String selectedText = SelectionUtils.getSelectedText(text).toString().trim();
+
+        int selectionStart = SelectionUtils.getSelectionStart(text);
+
+        String imageMarker = isImageLink ? "!" : "";
+        String result = imageMarker + "[" + selectedText + "](url)";
+        SelectionUtils.replaceSelectedText(text, result);
+
+        if (selectedText.length() == 0) {
+            Selection.setSelection(text, selectionStart + (isImageLink ? 2 : 1));
+        } else {
+            selectionStart = selectionStart + result.length() - 4;
+            Selection.setSelection(text, selectionStart, selectionStart + 3);
+        }
     }
 
     private static void requireEmptyLineAbove(@NonNull Spannable text, StringBuilder stringBuilder,
