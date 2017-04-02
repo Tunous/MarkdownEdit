@@ -79,14 +79,10 @@ public class MarkdownEdit {
         int selectionStart = SelectionUtils.getSelectionStart(text);
 
         StringBuilder stringBuilder = new StringBuilder();
-        requireEmptyLineAbove(text, stringBuilder, selectionStart);
-        stringBuilder.append("-------");
-
-        if (SelectionUtils.getSelectionEnd(text) == text.length()) {
+        if (selectionStart > 0) {
             stringBuilder.append("\n");
-        } else {
-            requireEmptyLineBelow(text, stringBuilder, SelectionUtils.getSelectionEnd(text));
         }
+        stringBuilder.append("___\n");
 
         SelectionUtils.replaceSelectedText(text, stringBuilder);
         updateCursorPosition(text, true);

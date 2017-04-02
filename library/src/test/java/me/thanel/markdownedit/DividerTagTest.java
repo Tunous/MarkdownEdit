@@ -19,7 +19,7 @@ public class DividerTagTest {
 
         MarkdownEdit.addDivider(text);
 
-        assertEqualsWithCursorPosition("-------\n|", text);
+        assertEqualsWithCursorPosition("___\n|", text);
     }
 
     @Test
@@ -28,7 +28,7 @@ public class DividerTagTest {
 
         MarkdownEdit.addDivider(text);
 
-        assertEqualsWithCursorPosition("Hello\n\n-------\n|", text);
+        assertEqualsWithCursorPosition("Hello\n___\n|", text);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class DividerTagTest {
 
         MarkdownEdit.addDivider(text);
 
-        assertEqualsWithCursorPosition("-------\n|\nHello", text);
+        assertEqualsWithCursorPosition("___\n|Hello", text);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class DividerTagTest {
 
         MarkdownEdit.addDivider(text);
 
-        assertEqualsWithCursorPosition("He\n\n-------\n|\nllo", text);
+        assertEqualsWithCursorPosition("He\n___\n|llo", text);
     }
 
     @Test
@@ -55,6 +55,6 @@ public class DividerTagTest {
 
         MarkdownEdit.addDivider(text);
 
-        assertEqualsWithCursorPosition("He\n\n-------\n|\no", text);
+        assertEqualsWithCursorPosition("He\n___\n|o", text);
     }
 }
