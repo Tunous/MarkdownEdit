@@ -2,6 +2,7 @@ package me.thanel.markdownedit;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.Spannable;
@@ -12,6 +13,36 @@ public class MarkdownEdit {
     public static final int LIST_TYPE_TASKS = 2;
 
     private MarkdownEdit() { /* cannot be instantiated */ }
+
+    /**
+     * Surrounds the selected text with Markdown bold tag (**text**), or if no text is selected
+     * inserts empty bold tag at the current cursor position.
+     *
+     * @param text The Editable text to which to add Markdown bold tag.
+     */
+    public static void addBold(@NonNull Editable text) {
+        surroundSelectionWith(text, "**");
+    }
+
+    /**
+     * Surrounds the selected text with Markdown italic tag (_text_), or if no text is selected
+     * inserts empty italic tag at the current cursor position.
+     *
+     * @param text The Editable text to which to add Markdown italic tag.
+     */
+    public static void addItalic(@NonNull Editable text) {
+        surroundSelectionWith(text, "_");
+    }
+
+    /**
+     * Surrounds the selected text with Markdown strike-through tag (~~text~~), or if no text is
+     * selected inserts empty strike-through tag at the current cursor position.
+     *
+     * @param text The Editable text to which to add Markdown strike-through tag.
+     */
+    public static void addStrikeThrough(@NonNull Editable text) {
+        surroundSelectionWith(text, "~~");
+    }
 
     /**
      * Inserts a markdown list to the specified EditText at the currently selected position.
@@ -103,34 +134,6 @@ public class MarkdownEdit {
 
         SelectionUtils.replaceSelectedText(text, result);
         updateCursorPosition(text, selectedText.length() > 0);
-    }
-
-    /**
-     * Inserts a markdown bold to the specified EditText at the currently selected position.
-     *
-     * @param text The EditText to which to add markdown bold tag.
-     */
-    public static void addBold(@NonNull Editable text) {
-        surroundSelectionWith(text, "**");
-    }
-
-    /**
-     * Inserts a markdown italic to the specified EditText at the currently selected position.
-     *
-     * @param text The EditText to which to add markdown italic tag.
-     */
-    public static void addItalic(@NonNull Editable text) {
-        surroundSelectionWith(text, "_");
-    }
-
-    /**
-     * Inserts a markdown strike-through to the specified EditText at the currently selected
-     * position.
-     *
-     * @param text The EditText to which to add markdown strike-through tag.
-     */
-    public static void addStrikeThrough(@NonNull Editable text) {
-        surroundSelectionWith(text, "~~");
     }
 
     /**
@@ -261,7 +264,8 @@ public class MarkdownEdit {
         }
     }
 
-    public static void surroundSelectionWith(@NonNull Editable text, @NonNull String surroundText) {
+    @VisibleForTesting
+    static void surroundSelectionWith(@NonNull Editable text, @NonNull String surroundText) {
         if (!SelectionUtils.hasSelection(text)) {
             SelectionUtils.selectWordAroundCursor(text);
         }

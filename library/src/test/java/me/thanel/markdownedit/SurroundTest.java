@@ -68,4 +68,31 @@ public class SurroundTest {
 
         assertEqualsWithCursorPosition(" **Hello**|\n", text);
     }
+    
+    @Test
+    public void addBold_addsCorrectSurroundText() {
+        Editable text = createEditableText("Hello|");
+        
+        MarkdownEdit.addBold(text);
+        
+        assertEqualsWithCursorPosition("**Hello**|", text);
+    }
+
+    @Test
+    public void addItalic_addsCorrectSurroundText() {
+        Editable text = createEditableText("Hello|");
+
+        MarkdownEdit.addItalic(text);
+
+        assertEqualsWithCursorPosition("_Hello_|", text);
+    }
+
+    @Test
+    public void addStrikeThrough_addsCorrectSurroundText() {
+        Editable text = createEditableText("Hello|");
+
+        MarkdownEdit.addStrikeThrough(text);
+
+        assertEqualsWithCursorPosition("~~Hello~~|", text);
+    }
 }
