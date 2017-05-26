@@ -250,7 +250,7 @@ public class MarkdownEdit {
             moveSelectionStartToStartOfLine(text);
             moveSelectionEndToEndOfLine(text);
         }
-        CharSequence selectedText = SelectionUtils.getSelectedText(text);
+        CharSequence selectedText = SelectionUtils.getSelectedText(text).toString().trim();
 
         int selectionStart = SelectionUtils.getSelectionStart(text);
 
