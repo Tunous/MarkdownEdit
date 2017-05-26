@@ -142,16 +142,23 @@ public class MarkdownEdit {
     public static void addList(@NonNull Editable text, @ListType int listType) {
         int tagCount = 1;
         String tag;
-        if (listType == LIST_TYPE_NUMBERS) {
-            tag = "1. ";
-        } else if (listType == LIST_TYPE_TASKS) {
-            tag = "- [ ] ";
-        } else {
-            tag = "- ";
+        switch (listType) {
+            case LIST_TYPE_NUMBERS:
+                tag = "1. ";
+                break;
+            case LIST_TYPE_TASKS:
+                tag = "- [ ] ";
+                break;
+            case LIST_TYPE_BULLETS:
+                tag = "- ";
+                break;
+            default:
+                throw new IllegalArgumentException("listType: Unknown list type.");
         }
 
         if (!SelectionUtils.hasSelection(text)) {
             moveSelectionStartToStartOfLine(text);
+            moveSelectionEndToEndOfLine(text);
         }
 
         CharSequence selectedText = SelectionUtils.getSelectedText(text);
