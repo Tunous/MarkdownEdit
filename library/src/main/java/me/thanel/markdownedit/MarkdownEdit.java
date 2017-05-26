@@ -212,6 +212,7 @@ public class MarkdownEdit {
         if (!SelectionUtils.hasSelection(text)) {
             SelectionUtils.selectWordAroundCursor(text);
         }
+
         CharSequence selectedText = SelectionUtils.getSelectedText(text);
         int selectionStart = SelectionUtils.getSelectionStart(text);
         String string = selectedText.toString();
@@ -230,7 +231,12 @@ public class MarkdownEdit {
         if (isCodeBlock) {
             updateCursorPosition(text, true);
         } else {
-            Selection.setSelection(text, SelectionUtils.getSelectionEnd(text) - 1);
+            int charactersToGoBack = 0;
+            if (selectedText.length() == 0) {
+                charactersToGoBack = 1;
+            }
+
+            Selection.setSelection(text, SelectionUtils.getSelectionEnd(text) - charactersToGoBack);
         }
     }
 
