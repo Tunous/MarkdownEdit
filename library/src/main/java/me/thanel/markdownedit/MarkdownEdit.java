@@ -7,6 +7,7 @@ import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.Spannable;
+import android.widget.EditText;
 
 public class MarkdownEdit {
     public static final int LIST_TYPE_BULLETS = 0;
@@ -26,13 +27,33 @@ public class MarkdownEdit {
     }
 
     /**
+     * Surrounds the selected text with Markdown bold tag "**text**", or if no text is selected
+     * inserts empty bold tag at the current cursor position.
+     *
+     * @param editText The {@link EditText} view to which to add Markdown bold tag.
+     */
+    public static void addBold(@NonNull EditText editText) {
+        addBold(editText.getText());
+    }
+
+    /**
      * Surrounds the selected text with Markdown italic tag "_text_", or if no text is selected
      * inserts empty italic tag at the current cursor position.
      *
-     * @param text The Editable text to which to add Markdown italic tag.
+     * @param text The {@link Editable} text to which to add Markdown italic tag.
      */
     public static void addItalic(@NonNull Editable text) {
         surroundSelectionWith(text, "_");
+    }
+
+    /**
+     * Surrounds the selected text with Markdown italic tag "_text_", or if no text is selected
+     * inserts empty italic tag at the current cursor position.
+     *
+     * @param editText The {@link EditText} view to which to add Markdown italic tag.
+     */
+    public static void addItalic(@NonNull EditText editText) {
+        addItalic(editText.getText());
     }
 
     /**
@@ -43,6 +64,16 @@ public class MarkdownEdit {
      */
     public static void addStrikeThrough(@NonNull Editable text) {
         surroundSelectionWith(text, "~~");
+    }
+
+    /**
+     * Surrounds the selected text with Markdown strike-through tag "~~text~~", or if no text is
+     * selected inserts empty strike-through tag at the current cursor position.
+     *
+     * @param editText The {@link EditText} view to which to add Markdown strike-through tag.
+     */
+    public static void addStrikeThrough(@NonNull EditText editText) {
+        addStrikeThrough(editText.getText());
     }
 
     /**
@@ -58,6 +89,18 @@ public class MarkdownEdit {
     }
 
     /**
+     * Turns the selected text to Markdown image tag "![title](url)" treating selection as a title.
+     * <p>
+     * If no text is selected the cursor will be positioned inside of the title tag, otherwise the
+     * url marker will be selected and previously selected text will be inserted as a image title.
+     *
+     * @param editText The {@link EditText} view to which to add Markdown image tag.
+     */
+    public static void addImage(@NonNull EditText editText) {
+        addImage(editText.getText());
+    }
+
+    /**
      * Turns the selected text to Markdown link tag "[title](url)" treating selection as a title.
      * <p>
      * If no text is selected the cursor will be positioned inside of the title tag, otherwise the
@@ -67,6 +110,18 @@ public class MarkdownEdit {
      */
     public static void addLink(@NonNull Editable text) {
         addLink(text, false);
+    }
+
+    /**
+     * Turns the selected text to Markdown link tag "[title](url)" treating selection as a title.
+     * <p>
+     * If no text is selected the cursor will be positioned inside of the title tag, otherwise the
+     * url marker will be selected and previously selected text will be inserted as a link title.
+     *
+     * @param editText The {@link EditText} view to which to add Markdown link tag.
+     */
+    public static void addLink(@NonNull EditText editText) {
+        addLink(editText.getText());
     }
 
     /**
@@ -87,6 +142,17 @@ public class MarkdownEdit {
 
         SelectionUtils.replaceSelectedText(text, stringBuilder);
         updateCursorPosition(text, true);
+    }
+
+    /**
+     * Inserts a Markdown divider at the cursor position.
+     * <p>
+     * If text is selected it'll be removed and divider will be added at its position instead.
+     *
+     * @param editText The {@link EditText} view to which to add Markdown divider.
+     */
+    public static void addDivider(@NonNull EditText editText) {
+        addDivider(editText.getText());
     }
 
     /**
@@ -134,9 +200,23 @@ public class MarkdownEdit {
     }
 
     /**
+     * Turns the selected tag to Markdown header tag "# text" with the specified heading level.
+     * <p>
+     * If no text is selected then the whole line at which the cursor is currently positioned will
+     * be changed to Markdown header tag instead.
+     *
+     * @param editText The {@link EditText} view to which to add Markdown header tag.
+     * @param level    The heading level. Must be in range from 1, inclusive, to 6, inclusive.
+     */
+    public static void addHeader(@NonNull EditText editText,
+            @IntRange(from = 1, to = 6) int level) {
+        addHeader(editText.getText(), level);
+    }
+
+    /**
      * Inserts a markdown list to the specified EditText at the currently selected position.
      *
-     * @param text     The EditText to which to add markdown list.
+     * @param text     The {@link Editable} text to which to add markdown list.
      * @param listType The type of the list.
      */
     public static void addList(@NonNull Editable text, @ListType int listType) {
@@ -204,9 +284,19 @@ public class MarkdownEdit {
     }
 
     /**
+     * Inserts a markdown list to the specified EditText at the currently selected position.
+     *
+     * @param editText The {@link EditText} view to which to add markdown list.
+     * @param listType The type of the list.
+     */
+    public static void addList(@NonNull EditText editText, @ListType int listType) {
+        addList(editText.getText(), listType);
+    }
+
+    /**
      * Inserts a markdown code block to the specified EditText at the currently selected position.
      *
-     * @param text The EditText to which to add markdown code block.
+     * @param text The {@link Editable} view to which to add markdown code block.
      */
     public static void addCode(@NonNull Editable text) {
         if (!SelectionUtils.hasSelection(text)) {
@@ -241,9 +331,18 @@ public class MarkdownEdit {
     }
 
     /**
+     * Inserts a markdown code block to the specified EditText at the currently selected position.
+     *
+     * @param editText The {@link EditText} view to which to add markdown code block.
+     */
+    public static void addCode(@NonNull EditText editText) {
+        addCode(editText.getText());
+    }
+
+    /**
      * Inserts a markdown quote block to the specified EditText at the currently selected position.
      *
-     * @param text The EditText to which to add quote block.
+     * @param text The {@link Editable} text to which to add quote block.
      */
     public static void addQuote(@NonNull Editable text) {
         if (!SelectionUtils.hasSelection(text)) {
@@ -266,6 +365,15 @@ public class MarkdownEdit {
 
         SelectionUtils.replaceSelectedText(text, stringBuilder);
         updateCursorPosition(text, selectedText.length() > 0);
+    }
+
+    /**
+     * Inserts a markdown quote block to the specified EditText at the currently selected position.
+     *
+     * @param editText The {@link EditText} view to which to add quote block.
+     */
+    public static void addQuote(@NonNull EditText editText) {
+        addQuote(editText.getText());
     }
 
     @VisibleForTesting
