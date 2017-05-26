@@ -85,4 +85,13 @@ public class ListTagsTest {
 
         assertEqualsWithCursorPosition("One\n\n- Two\n- Three\n- Four\n|\nFive", text);
     }
+
+    @Test
+    public void addList_createsOrderedListWithIncreasingNumbers() {
+        Editable text = createEditableText("|One\nTwo\nThree\nFour\nFive|");
+
+        MarkdownEdit.addList(text, MarkdownEdit.LIST_TYPE_NUMBERS);
+
+        assertEqualsWithCursorPosition("1. One\n2. Two\n3. Three\n4. Four\n5. Five|", text);
+    }
 }
