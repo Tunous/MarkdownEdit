@@ -76,4 +76,22 @@ public class QuoteTagTest {
 
         assertEqualsWithCursorPosition("> One\n> Two|", text);
     }
+
+    @Test
+    public void addQuote_insertsProvidedTextAsQuote() {
+        Editable text = createEditableText("Hello|");
+
+        MarkdownEdit.addQuote(text, "Quote");
+
+        assertEqualsWithCursorPosition("Hello\n\n> Quote|", text);
+    }
+
+    @Test
+    public void addQuote_changesSelectionToQuoteWithProvidedText() {
+        Editable text = createEditableText("He|ll|o");
+
+        MarkdownEdit.addQuote(text, "Quote");
+
+        assertEqualsWithCursorPosition("He\n\n> Quote\n|\no", text);
+    }
 }

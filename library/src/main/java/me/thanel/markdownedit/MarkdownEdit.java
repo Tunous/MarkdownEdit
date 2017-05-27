@@ -342,6 +342,25 @@ public class MarkdownEdit {
     /**
      * Inserts a markdown quote block to the specified EditText at the currently selected position.
      *
+     * @param editText The {@link EditText} view to which to add quote block.
+     */
+    public static void addQuote(@NonNull EditText editText) {
+        addQuote(editText.getText());
+    }
+
+    /**
+     * Inserts a markdown quote block to the specified EditText at the currently selected position.
+     *
+     * @param editText The {@link EditText} view to which to add quote block.
+     * @param quote    The text to insert as a quote.
+     */
+    public static void addQuote(@NonNull EditText editText, @NonNull CharSequence quote) {
+        addQuote(editText.getText(), quote);
+    }
+
+    /**
+     * Inserts a markdown quote block to the specified EditText at the currently selected position.
+     *
      * @param text The {@link Editable} text to which to add quote block.
      */
     public static void addQuote(@NonNull Editable text) {
@@ -349,31 +368,30 @@ public class MarkdownEdit {
             moveSelectionStartToStartOfLine(text);
             moveSelectionEndToEndOfLine(text);
         }
-        CharSequence selectedText = SelectionUtils.getSelectedText(text).toString().trim();
+        addQuote(text, SelectionUtils.getSelectedText(text).toString().trim());
+    }
 
+    /**
+     * Inserts a markdown quote block to the specified EditText at the currently selected position.
+     *
+     * @param text  The {@link Editable} text to which to add quote block.
+     * @param quote The text to insert as a quote.
+     */
+    public static void addQuote(@NonNull Editable text, @NonNull CharSequence quote) {
         int selectionStart = SelectionUtils.getSelectionStart(text);
 
         StringBuilder stringBuilder = new StringBuilder();
         requireEmptyLineAbove(text, stringBuilder, selectionStart);
 
         stringBuilder.append("> ");
-        if (selectedText.length() > 0) {
-            stringBuilder.append(selectedText.toString().replace("\n", "\n> "));
+        if (quote.length() > 0) {
+            stringBuilder.append(quote.toString().replace("\n", "\n> "));
         }
 
         requireEmptyLineBelow(text, stringBuilder, SelectionUtils.getSelectionEnd(text));
 
         SelectionUtils.replaceSelectedText(text, stringBuilder);
-        updateCursorPosition(text, selectedText.length() > 0);
-    }
-
-    /**
-     * Inserts a markdown quote block to the specified EditText at the currently selected position.
-     *
-     * @param editText The {@link EditText} view to which to add quote block.
-     */
-    public static void addQuote(@NonNull EditText editText) {
-        addQuote(editText.getText());
+        updateCursorPosition(text, quote.length() > 0);
     }
 
     @VisibleForTesting
