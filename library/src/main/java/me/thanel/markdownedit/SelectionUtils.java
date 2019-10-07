@@ -1,6 +1,6 @@
 package me.thanel.markdownedit;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.Spannable;
