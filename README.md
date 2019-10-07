@@ -1,6 +1,29 @@
-# MarkdownEdit
+# MarkdownEdit [![](https://jitpack.io/v/Tunous/MarkdownEdit.svg)](https://jitpack.io/#Tunous/MarkdownEdit)
 
 Minimal markdown formatting library for android. Designed to be easy to use with editable views like EditText.
+
+# Installation
+
+**Step 1.** Add the JitPack repository to your build file
+
+Add it in your root `build.gradle` at the end of repositories:
+
+```gradle
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
+}
+```
+
+**Step 2.** Add the dependency
+
+```gradle
+dependencies {
+	implementation 'com.github.Tunous:MarkdownEdit:1.0.0'
+}
+```
 
 # License
 
